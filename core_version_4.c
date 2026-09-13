@@ -8,8 +8,6 @@
 #define SCREEN_W 1920
 #define SCREEN_H 1080
 
-#define GAME_VERSION "v4.0"
-
 /* Intro amation slot length, in seconds, shown once right before the
  * first Role Reveal each game. Placeholder content for now -- swap the
  * drawing inside SCREEN_INTRO_ANIM for real animation/art later. */
@@ -419,9 +417,7 @@ EndDrawing();
                     quitRequested = true;
                 }
 
-                ///* v4: version tag, bottom-right corner */
-                //const char *verText = GAME_VERSION;
-                //int verW = MeasureText(verText, 22);
+               //the tiny version namee at the bottom corner 
                 DrawText("v4.4.1", SCREEN_W - 100, SCREEN_H - 40, 30, GRAY);
                 break;
             }
