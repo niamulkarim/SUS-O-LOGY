@@ -10,12 +10,12 @@
 
 #define GAME_VERSION "v4.0"
 
-/* Intro animation slot length, in seconds, shown once right before the
+/* Intro amation slot length, in seconds, shown once right before the
  * first Role Reveal each game. Placeholder content for now -- swap the
  * drawing inside SCREEN_INTRO_ANIM for real animation/art later. */
 #define INTRO_ANIM_SECONDS 5.0f
 
-/* ================= Screens ================= */
+// for all the sceen 
 
 typedef enum {
     SCREEN_MAIN_MENU,
