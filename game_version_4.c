@@ -125,7 +125,7 @@ int run_day_vote(GameState *gs, const int *votes) {
         }
     }
 
-    if (max_votes > eligible_voters / 2 && max_votes > 0) {
+    if (max_votes > 0) {
         Player *eliminated = &gs->players[max_id];
         eliminated->status = ELIMINATED;
         eliminated->can_vote = 0;
