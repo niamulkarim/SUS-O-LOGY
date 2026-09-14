@@ -8,50 +8,41 @@
 #define SCREEN_W 1920
 #define SCREEN_H 1080
 
-/* Intro amation slot length, in seconds, shown once right before the
- * first Role Reveal each game. Placeholder content for now -- swap the
- * drawing inside SCREEN_INTRO_ANIM for real animation/art later. */
+//researve a slot for 5 sec 
 #define INTRO_ANIM_SECONDS 5.0f
 
 // for all the sceen 
-
 typedef enum {
     SCREEN_MAIN_MENU,
-    SCREEN_SETTINGS,        /* v4 */
-    SCREEN_RULES,           /* v4 */
+    SCREEN_SETTINGS,       
+    SCREEN_RULES,           
     SCREEN_PLAYER_SETUP,
-    SCREEN_INTRO_ANIM,      /* v4 */
+    SCREEN_INTRO_ANIM,     
     SCREEN_ROLE_REVEAL,
     SCREEN_DAY_VOTE,
     SCREEN_DAY_RESULT,
     SCREEN_NIGHT_ACTION,
     SCREEN_NIGHT_RESULT,
-    SCREEN_ZOMBIE_REVEAL,   /* v4 */
+    SCREEN_ZOMBIE_REVEAL,  
     SCREEN_GAME_OVER,
     SCREEN_LEADERBOARD
 } AppScreen;
 
-/* ================= Background textures =================
-   >>> PUT YOUR IMAGE FILENAMES HERE <<<
-   Every screen has its own background slot below. Drop your art into
-   assets/images/backgrounds/ and rename the strings to match your files.
-   All images are drawn stretched to fill the full 1920x1080 window.
-   Any slot left pointing at a missing file just falls back to a plain
-   cleared background -- nothing crashes. */
+
 typedef struct {
     Texture2D menu;
-    Texture2D settings;              /* v4 */
-    Texture2D rules;                 /* v4 */
+    Texture2D settings;             
+    Texture2D rules;                 
     Texture2D setup;
-    Texture2D introAnim;             /* v4 */
-    Texture2D roleRevealVillager;    /* v4: was one shared "roleReveal" slot */
-    Texture2D roleRevealGhost;       /* v4 */
-    Texture2D roleRevealWizard;      /* v4 */
+    Texture2D introAnim;             
+    Texture2D roleRevealVillager;    
+    Texture2D roleRevealGhost;      
+    Texture2D roleRevealWizard;     
     Texture2D dayVote;
     Texture2D dayResult;
     Texture2D nightAction;
     Texture2D nightResult;
-    Texture2D zombieReveal;          /* v4 */
+    Texture2D zombieReveal;         
     Texture2D gameOverVillagerWin;
     Texture2D gameOverGhostWin;
     Texture2D leaderboard;
@@ -59,23 +50,25 @@ typedef struct {
 } Backgrounds;
 
 #define INTRO_FPS 30
-#define INTRO_FRAME_COUNT 150
-
-Texture2D introFrames[INTRO_FRAME_COUNT];
+#define INTRO_FRAME_COUNT 150  
+//150 frames ÷ 30 FPS = 5 seconds
+Texture2D introFrames[INTRO_FRAME_COUNT]; //array 5sec anim -150 image - 30i/s 
 
 static Backgrounds load_backgrounds(void) {
     Backgrounds bg;
-    // ============================================================
+    
     bg.menu                 = LoadTexture("assets/image/background/SUS.png");
     bg.settings              = LoadTexture("assets/image/background/settings.png");
     bg.rules                 = LoadTexture("assets/image/background/download.png");
     bg.setup                 = LoadTexture("assets/image/background/role_assign2.png");
-    /* INTRO ANIMATION FRAMES */
+
+    //for the introoo
     for (int i = 0; i < INTRO_FRAME_COUNT; i++) {
         char filename[100];
         sprintf(filename, "assets/image/background/intro/frame%03d.png", i + 1);
         introFrames[i] = LoadTexture(filename);
     }
+    
     bg.roleRevealVillager    = LoadTexture("assets/image/background/villager_role.png");
     bg.roleRevealGhost       = LoadTexture("assets/image/background/ghost_role.png");
     bg.roleRevealWizard      = LoadTexture("assets/image/background/wizard_role.png");
@@ -88,7 +81,7 @@ static Backgrounds load_backgrounds(void) {
     bg.gameOverGhostWin      = LoadTexture("assets/image/background/ghost_win.png");
     bg.leaderboard           = LoadTexture("assets/image/background/leaderboard.png");
     bg.start                 = LoadTexture("assets/image/background/start1.png");
-    // ============================================================
+   
     return bg;
 }
 
@@ -97,7 +90,7 @@ static void unload_backgrounds(Backgrounds *bg) {
     UnloadTexture(bg->settings);
     UnloadTexture(bg->rules);
     UnloadTexture(bg->setup);
-    //UnloadTexture(bg->introAnim);
+    //for the introooo
     for (int i = 0; i < INTRO_FRAME_COUNT; i++) {
     UnloadTexture(introFrames[i]);
     }
@@ -115,20 +108,14 @@ static void unload_backgrounds(Backgrounds *bg) {
     UnloadTexture(bg->start);
 }
 
-/* Draws a background texture stretched to fill the whole window.
-   If the texture failed to load (width == 0), just leaves the plain
-   ClearBackground color showing instead of crashing. */
+//background immage setup ..all the pics are in perfect size 
 static void draw_background(Texture2D tex) {
     if (tex.width > 0) {
-        DrawTexturePro(tex,
-            (Rectangle){0, 0, (float)tex.width, (float)tex.height},
-            (Rectangle){0, 0, (float)SCREEN_W, (float)SCREEN_H},
-            (Vector2){0, 0}, 0.0f, WHITE);
+        DrawTexture(tex, 0, 0, WHITE);
     }
-}
+} 
 
-/* ================= Button helpers =================
-   Draws a button and returns true the frame it's clicked. */
+//create button + checks hovvering + checks clicks 
 static bool button(Rectangle rect, const char *label, Vector2 mouse, int fontSize) {
     bool hover = CheckCollisionPointRec(mouse, rect);
     Color fill = hover ? (Color){230, 41, 55, 255} : (Color){110, 25, 40, 255};
@@ -138,15 +125,13 @@ static bool button(Rectangle rect, const char *label, Vector2 mouse, int fontSiz
     DrawText(label, (int)(rect.x + (rect.width - textWidth) / 2),
               (int)(rect.y + (rect.height - fontSize) / 2), fontSize, BLACK);
     return hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
-}
+}//returns tf 
 
-/* v4: same as button(), but draws a persistent "selected" highlight
- * (independent of hover) -- used by the Day Vote screen's select-then-
- * confirm flow so the player can see who they've picked before confirming. */
+//buttons but with selected highlight used in day vottingg 
 static bool button_selectable(Rectangle rect, const char *label, Vector2 mouse, int fontSize, bool selected) {
     bool hover = CheckCollisionPointRec(mouse, rect);
     Color fill;
-    if (selected)      fill = (Color){230, 41, 55, 255};   /* burugundy light = selected */
+    if (selected)      fill = (Color){230, 41, 55, 255};   //shk recommanded 
     else if (hover)    fill = (Color){128, 128, 128, 255};
     else               fill = (Color){110, 25, 40, 255};
     DrawRectangleRec(rect, fill);
@@ -155,13 +140,9 @@ static bool button_selectable(Rectangle rect, const char *label, Vector2 mouse, 
     DrawText(label, (int)(rect.x + (rect.width - textWidth) / 2),
               (int)(rect.y + (rect.height - fontSize) / 2), fontSize, BLACK);
     return hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
-}
+}//returns tf 
 
-/* Draws a vertical list of alive-player buttons (used for vote/kill/protect
- * target selection). Returns the clicked player's id, or -1.
- * v4: selectedId, if >= 0, is drawn with a persistent highlight (used by
- * the Day Vote screen's select-then-confirm flow). Pass -1 for screens that
- * resolve immediately on click (Night Action), where no highlight is needed. */
+//list of available players 
 static int player_button_list(const GameState *gs, int excludeId, int villagerSideOnly,
                                 Vector2 mouse, float startX, float startY, int selectedId) {
     int clicked = -1;
@@ -181,9 +162,9 @@ static int player_button_list(const GameState *gs, int excludeId, int villagerSi
         if (col == 6) { col = 0; y = startY; x += 400; }
     }
     return clicked;
-}
+}//return the id of the clicked  player 
 
-/* ================= Bot decision helper ================= */
+//bot votes for selecting ghost 
 static int bot_pick_random_alive(const GameState *gs, int excludeId, int villagerSideOnly) {
     int candidates[MAX_PLAYERS], n = 0;
     for (int i = 0; i < gs->player_count; i++) {
@@ -194,14 +175,10 @@ static int bot_pick_random_alive(const GameState *gs, int excludeId, int village
         candidates[n++] = i;
     }
     if (n == 0) return -1;
-    return candidates[rand() % n];
+    return candidates[rand() % n];//generates a random number 
 }
 
-/* ================= Phase transition helpers =================
-   These decide whether the human needs to be shown an interactive
-   screen, or whether the phase can resolve immediately (human is
-   dead / has no action this phase) and skip straight to the result. */
-
+//makes it easy when there is no need to take vote 
 static void resolve_day_vote_now(GameState *gs, int humanChoice, int *lastEliminated) {
     int votes[MAX_PLAYERS];
     for (int i = 0; i < gs->player_count; i++) votes[i] = -1;
@@ -231,9 +208,7 @@ static void resolve_day_vote_now(GameState *gs, int humanChoice, int *lastElimin
     }
 }
 
-/* v4: now also collects the active (human) Zombie's independent kill
- * target, and reports whether the human just became an active Zombie this
- * very night (so the caller can route to SCREEN_ZOMBIE_REVEAL once). */
+//all the night actions 
 static void resolve_night_now(GameState *gs, int humanGhostTarget, int humanWizardTarget,
                                 int humanZombieTarget, int *lastKilled, int *lastProtected,
                                 int *lastZombieKilled, bool *justBecameActiveZombie) {
@@ -251,7 +226,7 @@ static void resolve_night_now(GameState *gs, int humanGhostTarget, int humanWiza
         if (target >= 0) wizard_choose_protect(gs, target);
     }
 
-    /* v4: only the human can be an active Zombie -- bots never are. */
+    
     Player *human = &gs->players[gs->human_id];
     if (human->status == ALIVE && human->is_active_zombie) {
         if (humanZombieTarget >= 0) zombie_choose_kill(gs, humanZombieTarget);
@@ -263,26 +238,17 @@ static void resolve_night_now(GameState *gs, int humanGhostTarget, int humanWiza
     *lastProtected = protectedId;
     *lastZombieKilled = zombieKilled;
 
-    /* The Ghost can only ever land this exact kill on the human once -- once
-     * turned, the human's role is ZOMBIE, which ghost_choose_kill rejects
-     * as a target, so this can't accidentally re-trigger later rounds. */
+     //Human killed → becomes Zombie → Ghost can no longer target them.
     *justBecameActiveZombie = (killed == gs->human_id);
 
-    /* v4: the Ghost's kill and the Wizard's protect are no longer mutually
-     * exclusive outcomes of the same event -- with two independent attacks
-     * possible in one night, the Ghost's kill can land while the Wizard
-     * separately blocks the Zombie's kill (or vice versa), so both are
-     * scored independently instead of the old else-if. */
+    //ghost and wizzerd both can score 
     if (killed >= 0) score_ghost_kill(gs);
     if (protectedId >= 0) score_wizard_protect(gs);
 
     score_round_survival(gs);
 }
 
-/* v4: shared by every place that needs to move into the next Day Vote (or
- * skip straight past it if the human can't vote) -- also resets the Day
- * Vote screen's pending selection so a stale pick from a previous round
- * can't carry over. */
+//either human can vote or cannot 
 static void advance_to_day_vote(GameState *gs, AppScreen *screen, int *lastEliminated, int *selectedVoteTarget) {
     *selectedVoteTarget = -1;
     Player *human = &gs->players[gs->human_id];
@@ -294,10 +260,11 @@ static void advance_to_day_vote(GameState *gs, AppScreen *screen, int *lastElimi
     }
 }
 
-/* ================= Main ================= */
+//maiin 
 
 int main(void) {
     srand((unsigned int)time(NULL));
+    //the seed changes based on the current time
 
     InitWindow(SCREEN_W, SCREEN_H, "Ghost Game");
     SetTargetFPS(60);
@@ -859,7 +826,7 @@ EndDrawing();
 
         EndDrawing();
     }
-
+    
     unload_backgrounds(&bg);
     UnloadSound(introStartSound);
     UnloadSound(introEndSound);
