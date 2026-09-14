@@ -124,10 +124,6 @@ int wizard_succession(GameState *gs);
 /* ---- Win condition check (GDD 6.2, updated for v2 dead Zombies) ---- */
 /* Updates gs->game_over. Returns the resulting game_over value. */
 int check_win_condition(GameState *gs);
-
-/* ---- Disconnect handling (GDD 3.4 / section 11) ---- */
-void handle_disconnect(GameState *gs, int player_id);
-
 /* ---- Scoring (GDD 4.1) ---- */
 void score_round_survival(GameState *gs);
 void score_correct_vote(GameState *gs, int voter_id);
