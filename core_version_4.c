@@ -331,7 +331,7 @@ int main(void) {
 
         switch (screen) {
 
-            /* ============================================================ */
+         
             case SCREEN_MAIN_MENU: {
                 draw_background(bg.menu);
                 if (button((Rectangle){SCREEN_W/2 - 150, 500, 300, 70}, "Draw Your Fate", mouse, 30)) {
@@ -343,13 +343,10 @@ int main(void) {
                 if (button((Rectangle){SCREEN_W/2 - 150, 670, 300, 70}, "Sacred Rules", mouse, 30)) {
                     screen = SCREEN_RULES;
                 }
-                /* v4: aesthetic-only placeholders -- intentionally not wired
-                 * to anything yet, will get real behavior later. */
+               
                 if (button((Rectangle){SCREEN_W/2 - 150, 755, 300, 70}, "The Crews", mouse, 30)) {
-                    /* no-op for now */
                 }
                 if (button((Rectangle){SCREEN_W/2 - 150, 840, 300, 70}, "Achievements", mouse, 30)) {
-                    /* no-op for now */
                 }
                 if (button((Rectangle){SCREEN_W/2 - 150, 925, 300, 70}, "Walkaway", mouse, 30)) {
                     quitRequested = true;
@@ -363,15 +360,10 @@ int main(void) {
             /* ============================================================ */
             case SCREEN_SETTINGS: {
                 draw_background(bg.settings);
-               // DrawText("SETTINGS", SCREEN_W/2 - MeasureText("SETTINGS", 60)/2, 140, 60, WHITE);
-
-                /* v4: aesthetic-only placeholders -- no actual settings
-                 * wired up yet, just visual scaffolding for later. */
+              
                 if (button((Rectangle){SCREEN_W/2 - 200, 390, 400, 70}, "Sound: ON", mouse, 28)) {
-                    /* no-op for now */
                 }
                 if (button((Rectangle){SCREEN_W/2 - 200, 600, 400, 70}, "Fullscreen: OFF", mouse, 28)) {
-                    /* no-op for now */
                 }
 
                 if (button((Rectangle){SCREEN_W/2 - 130, 835, 300, 80}, "Back", mouse, 32)) {
@@ -392,7 +384,6 @@ int main(void) {
                 break;
             }
 
-            /* ============================================================ */
             case SCREEN_PLAYER_SETUP: {
                 draw_background(bg.setup);
                 DrawText("SIGN THE LEDGER......", 80, 60, 32, WHITE);
@@ -407,8 +398,6 @@ int main(void) {
                     if (activeNameField >= setupPlayerCount) activeNameField = -1;
                 }
 
-                /* v4: one name box per player slot, 2 columns x 5 rows.
-                 * Click a box to give it keyboard focus, then type. */
                 for (int i = 0; i < setupPlayerCount; i++) {
                     int col = i / 5;
                     int row = i % 5;
@@ -429,12 +418,9 @@ int main(void) {
                     }
                 }
 
-                /* v4: placeholder multiplayer buttons -- not functional yet. */
                 if (button((Rectangle){1570, 700, 300, 70}, "Connect via WiFi", mouse, 26)) {
-                    /* no-op for now */
                 }
                 if (button((Rectangle){1570, 800, 300, 70}, "Connect via LAN", mouse, 26)) {
-                    /* no-op for now */
                 }
 
                 if (button((Rectangle){1570, 350, 300, 80}, "CONFIRM", mouse, 32)) {
@@ -458,8 +444,7 @@ int main(void) {
                     gs.human_id = 0;
 
                     assign_roles(&gs);
-
-                    /* reset per-game round state */
+                    
                     lastEliminated = -1;
                     lastKilled = -1; lastProtected = -1; lastZombieKilled = -1;
                     humanGhostTarget = -1; humanWizardTarget = -1; humanZombieTarget = -1;
@@ -473,22 +458,19 @@ int main(void) {
                 break;
             }
 
-            /* ============================================================ */
             case SCREEN_INTRO_ANIM: {
 
                 introAnimTimer += GetFrameTime();
 
-                /* Find which frame to display */
                  int currentFrame = (int)(introAnimTimer * INTRO_FPS);
 
                 if (currentFrame >= INTRO_FRAME_COUNT)
                      currentFrame = INTRO_FRAME_COUNT - 1;
 
-            /* Draw current animation frame */
             draw_background(introFrames[currentFrame]);
 
 
-            /* Text on top */
+            //text on top 
             const char *title = "LOADING......";
 
             DrawText(title,
@@ -520,7 +502,7 @@ int main(void) {
 
             break;
          }
-            /* ============================================================ */
+           
             case SCREEN_ROLE_REVEAL: {
                 Player *me = &gs.players[gs.human_id];
 
