@@ -266,43 +266,22 @@ int main(void) {
     srand((unsigned int)time(NULL));
     //the seed changes based on the current time
 
-    InitWindow(SCREEN_W, SCREEN_H, "Ghost Game");
+    InitWindow(SCREEN_W, SCREEN_H, "SUS-0-LOGY");
     SetTargetFPS(60);
     InitAudioDevice();
-
-// ============================================================
-// >>> PUT YOUR SOUND FILENAMES HERE <
+    //SOUND INPUT 
     Sound introStartSound = LoadSound("assets/audio/sus_ending.wav");
     Sound introEndSound   = LoadSound("assets/audio/sus_start.wav");
-// ============================================================
-    /* Optional app icon (taskbar/title bar). Drop a square PNG (e.g. 256x256)
-     * at assets/images/icon.png and this picks it up automatically -- safe
-     * to leave as-is if you don't have one yet (LoadImage on a missing file
-     * just returns an empty image and this is skipped). */
-    Image iconImg = LoadImage("assets/images/icon.png");
-if (iconImg.width > 0) {
-    SetWindowIcon(iconImg);
-}
-UnloadImage(iconImg);
-//Backgrounds bg = load_backgrounds();
-// ============================================================
-// v5: show one static "please wait" frame before the heavy
-// texture loading below, so the window isn't blank/frozen-looking.
-Texture2D yesBackground      = LoadTexture("assets/image/background/start1.png");
-    ClearBackground(BLACK);
-BeginDrawing();
-   // Texture2D yesBackground      = LoadTexture("assets/image/background/start1.png");
+
+    //my own implimentation......proud of it 
+    Texture2D yesBackground      = LoadTexture("assets/image/background/start1.png");
+    BeginDrawing();
     ClearBackground(BLACK);
     DrawTexture(yesBackground, 0, 0, WHITE);
-    //draw_background(bg.start);
-    //draw_background(bg.menu);
     const char *loadingMsg = "Something Is Awakening, The Ritual is Underway.....";
-    DrawText(loadingMsg,
-              SCREEN_W/2 - MeasureText(loadingMsg, 56)/2,830, 56, RED);
-   // UnloadTexture(yesBackground);
-EndDrawing();
+    DrawText(loadingMsg, SCREEN_W/2 - MeasureText(loadingMsg, 56)/2,830, 56, RED);
+    EndDrawing();
     UnloadTexture(yesBackground);
-
     WaitTime(0.5);
     
     Backgrounds bg = load_backgrounds();
@@ -310,31 +289,27 @@ EndDrawing();
     AppScreen screen = SCREEN_MAIN_MENU;
     PlaySound(introEndSound);
     GameState gs;
-    memset(&gs, 0, sizeof(gs));
+    memset(&gs, 0, sizeof(gs));//clean initial state 
 
-    /* v4: one name field per possible player slot, filled in on Player
-     * Setup. Index 0 is always the human. Persists across "Play Again" so
-     * the player doesn't have to retype bot names every round. */
+    //
     char playerNameInputs[MAX_PLAYERS][MAX_NAME_LEN];
     for (int i = 0; i < MAX_PLAYERS; i++) playerNameInputs[i][0] = '\0';
-    int activeNameField = -1; /* which name box currently has keyboard focus, -1 = none */
+    int activeNameField = -1; //keyboard focus 
 
     int setupPlayerCount = 7;
-
     int lastEliminated = -1;
     int lastKilled = -1, lastProtected = -1, lastZombieKilled = -1;
     int humanGhostTarget = -1, humanWizardTarget = -1, humanZombieTarget = -1;
-    int selectedVoteTarget = -1; /* v4: Day Vote's pending pick, before Confirm */
-    bool justBecameActiveZombie = false; /* v4 */
-    float introAnimTimer = 0.0f; /* v4 */
-
+    int selectedVoteTarget = -1; 
+    bool justBecameActiveZombie = false; 
+    float introAnimTimer = 0.0f; 
     bool quitRequested = false;
 
     while (!WindowShouldClose() && !quitRequested) {
 
         Vector2 mouse = GetMousePosition();
 
-        /* -------- text input (only matters on Setup screen) -------- */
+        //name input 
         if (screen == SCREEN_PLAYER_SETUP && activeNameField >= 0 && activeNameField < setupPlayerCount) {
             int key = GetCharPressed();
             while (key > 0) {
@@ -352,17 +327,13 @@ EndDrawing();
         }
 
         BeginDrawing();
-        //PlaySound(introEndSound);
         ClearBackground(RAYWHITE);
 
         switch (screen) {
 
             /* ============================================================ */
             case SCREEN_MAIN_MENU: {
-               // PlaySound(introEndSound);
                 draw_background(bg.menu);
-               // DrawText("GHOST GAME", SCREEN_W/2 - MeasureText("GHOST GAME", 80)/2, 160, 80, MAROON);
-
                 if (button((Rectangle){SCREEN_W/2 - 150, 500, 300, 70}, "Draw Your Fate", mouse, 30)) {
                     screen = SCREEN_PLAYER_SETUP;
                 }
