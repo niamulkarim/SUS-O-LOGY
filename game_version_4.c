@@ -327,24 +327,6 @@ int check_win_condition(GameState *gs) {
     return gs->game_over;
 }
 
-/* ================= 3.4 / Section 11 Disconnect Handling ================= */
-
-void handle_disconnect(GameState *gs, int player_id) {
-    Player *p = find_player(gs, player_id);
-    if (!p) return;
-
-    p->status = DISCONNECTED;
-    p->can_vote = 0;
-    p->can_chat = 0;
-    p->points -= 20; /* 4.1 disconnect penalty */
-
-    if (player_id == gs->ghost_id) {
-        gs->game_over = GAME_VILLAGER_WIN;
-    } else if (player_id == gs->wizard_id) {
-        wizard_succession(gs);
-    }
-}
-
 /* ================= 4.1 Scoring ================= */
 
 void score_round_survival(GameState *gs) {
