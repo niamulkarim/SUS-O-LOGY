@@ -46,8 +46,8 @@ int count_living_villagers(const GameState *gs) {
     return count;
 }
 
-/* v2: Zombies are now dead (ELIMINATED) the moment they're made, so this is
- * purely informational (used for end-game stats), not for win-condition math. */
+/* Zombies eliminated immediately.
+ * Only used for end-game statistics. */
 int count_ghost_team(const GameState *gs) {
     int count = 0;
     for (int i = 0; i < gs->player_count; i++) {
@@ -136,8 +136,8 @@ int run_day_vote(GameState *gs, const int *votes) {
             wizard_succession(gs);
         }
 
-        /* v4: voting out the human's active Zombie ends the game as an
-         * immediate Villager win, even if the real Ghost is still alive. */
+       /* Human Zombie voted out.
+        * Immediately gives Villagers the win. */
         if (eliminated->role == ZOMBIE && eliminated->is_active_zombie) {
             gs->zombie_vote_out_win = 1;
         }
@@ -171,17 +171,16 @@ int wizard_choose_protect(GameState *gs, int target_id) {
     return 1;
 }
 
-/* v4: the active (human) Zombie's own kill target, independent of the
- * Ghost's. Same validation as the Ghost's kill: must be an alive Villager
- * or Wizard, and can't target themself. */
+/* Human Zombie chooses their own target.
+ * Target must be an alive Villager or Wizard, not themself. */
 int zombie_choose_kill(GameState *gs, int target_id) {
     Player *target = find_player(gs, target_id);
     if (!target) return 0;
     if (target->status != ALIVE) return 0;
     if (target->role != VILLAGER && target->role != WIZARD) return 0;
 
-    /* find caller by scanning for the active zombie -- guard against
-     * self-targeting even though callers shouldn't offer it as an option */
+   /* Find the active Zombie.
+ * Prevent the Zombie from targeting themself. */
     for (int i = 0; i < gs->player_count; i++) {
         if (gs->players[i].is_active_zombie && target_id == i) return 0;
     }
@@ -218,13 +217,14 @@ int resolve_night(GameState *gs, int *protected_id, int *zombie_killed_id) {
                 int was_wizard = (ghost_target == gs->wizard_id);
 
                 if (target->is_human) {
-                    /* v4: a human turned Zombie stays in the game -- alive,
-                     * can still vote, and gains their own night kill action. */
+                    /* Human turned Zombie stays alive.
+                     * Can vote and gets a night kill action. */
                     target->role = ZOMBIE;
                     target->is_active_zombie = 1;
-                    /* status/can_vote/can_chat deliberately left ALIVE/1/1 */
+                   /* Keep human Zombie alive.
+                    * They can still vote. */
                 } else {
-                    /* v2/v3 behaviour unchanged for bots: dead on the spot */
+                   /* Bots become Zombies and die immediately. */
                     target->role = ZOMBIE;
                     target->status = ELIMINATED;
                     target->can_vote = 0;
@@ -240,9 +240,8 @@ int resolve_night(GameState *gs, int *protected_id, int *zombie_killed_id) {
         }
     }
 
-    /* -------- Active Zombie's independent kill (v4) --------
-     * Skipped if it's the same target the Ghost just hit (already handled
-     * above), since a target can't be killed twice in the same resolution. */
+   /* Zombie gets an independent kill.
+    * Skipped if targeting the Ghost's target. */
     if (zombie_target >= 0 && zombie_target != ghost_target) {
         Player *ztarget = find_player(gs, zombie_target);
         if (ztarget && ztarget->status == ALIVE) {
@@ -295,10 +294,8 @@ int wizard_succession(GameState *gs) {
 /* ================= 6.2 Win Condition Check (v2) ================= */
 
 int check_win_condition(GameState *gs) {
-    /* v4: voting out the human's active Zombie is an immediate Villager
-     * win, independent of the Ghost's status. Checked first, and stored as
-     * its own flag (set once, in run_day_vote) so it can't be undone by the
-     * normal Ghost-status/living-villager checks below. */
+    /* Human Zombie voted out.
+     * Immediately gives Villagers the win. */
     if (gs->zombie_vote_out_win) {
         gs->game_over = GAME_VILLAGER_WIN;
         return gs->game_over;
@@ -312,12 +309,8 @@ int check_win_condition(GameState *gs) {
         return gs->game_over;
     }
 
-    /* v2: Zombies are dead the instant they're made, so the Ghost simply
-     * wins once no living Villagers/Wizards remain to vote against it.
-     * Also: with only 1 Villager/Wizard left, the Day vote can never
-     * produce a majority (it locks into a permanent 1-vs-1 tie with the
-     * Ghost), so that parity is treated as a Ghost win too -- otherwise
-     * the game deadlocks forever. */
+    /* No living Villagers/Wizards means Ghost wins.
+     * One Villager/Wizard left also means Ghost wins to avoid a deadlock. */
     if (lv <= 1) {
         gs->game_over = GAME_GHOST_WIN;
         return gs->game_over;
@@ -377,7 +370,8 @@ void get_leaderboard_order(const GameState *gs, int *order_out) {
     int n = gs->player_count;
     for (int i = 0; i < n; i++) order_out[i] = i;
 
-    /* simple insertion sort, descending by points -- fine for <=10 players */
+    /* Simple insertion marsi 
+     * Sorts players by points, highest first. */
     for (int i = 1; i < n; i++) {
         int key = order_out[i];
         int key_points = gs->players[key].points;
