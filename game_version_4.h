@@ -24,12 +24,10 @@ typedef struct {
     Role role;                  /* Current role -- can change (Wizard) */
     Status status;              /* Alive / Eliminated / Disconnected */
     int  can_vote;               /* 0 if Zombie(dead) or Eliminated */
-    int  can_chat;                /* 0 if Eliminated (Spectator Mode) */
     int  points;                  /* Running score across rounds */
     int  is_human;                 /* 1 if this seat is controlled interactively */
-    int  socket_fd;                /* Server-side socket fd (server only, unused in sim) */
-
-    /* v4: set to 1 only when a HUMAN is turned into a Zombie by the Ghost.
+   
+/* v4: set to 1 only when a HUMAN is turned into a Zombie by the Ghost.
      * Unlike a bot Zombie (which is immediately dead/ELIMINATED), an active
      * Zombie stays ALIVE, keeps can_vote, and gets a night kill action of
      * their own. Bots are never turned into an active Zombie -- for them,
